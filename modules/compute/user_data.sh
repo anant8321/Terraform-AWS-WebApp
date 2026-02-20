@@ -1,10 +1,11 @@
 #! /bin/bash
 yum update -y
-yum install -y httpd
 
-# changing default port to given port number
-sed -i "s/Listen 80/Listen ${APP_PORT_NO}/" /etc/httpd/conf/httpd.conf
+yum install -y java-17-amazon-corretto aws-cli
 
-echo "Hello from Auto-Scaling EC2" > /var/www/html/index.html
-systemctl start httpd
-systemctl enable httpd
+mkdir -p /home/ec2-user/app
+cd /home/ec2-user/app
+
+aws s3 cp s3://anant-monitoring-app/monitoring-app.jar app.jar
+
+nohup java -jar app.jar --server.port=${APP_PORT_NO} > app.log 2>&1 &

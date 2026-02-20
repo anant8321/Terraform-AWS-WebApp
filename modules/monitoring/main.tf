@@ -1,7 +1,7 @@
 resource "aws_autoscaling_policy" "scale-out" {
   name = "${var.project_name}-scale-out"
   autoscaling_group_name = var.asg_name
-  adjustment_type = "changeInCapacity"
+  adjustment_type = "ChangeInCapacity"
   scaling_adjustment = 1    # add 1 EC2 at a time
   cooldown = 300        # wait 5min(300s) before next scaling action
 }
@@ -9,7 +9,7 @@ resource "aws_autoscaling_policy" "scale-out" {
 resource "aws_autoscaling_policy" "scale-in" {
   name = "${var.project_name}-scale-in"
   autoscaling_group_name = var.asg_name
-  adjustment_type = "changeInCapacity"
+  adjustment_type = "ChangeInCapacity"
   scaling_adjustment = -1   # remove 1 EC2 at a time
   cooldown = 300
 }

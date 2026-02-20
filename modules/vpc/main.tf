@@ -68,6 +68,9 @@ resource "aws_route_table" "private_rt" {
     cidr_block = "0.0.0.0/0"        // allows outbound + only inbound which are responses for outbound
     nat_gateway_id = aws_nat_gateway.this.id
   }
+  tags = {
+    Name = "${var.vpc_name}-private-rt"
+  }
 }
 // route table associations to respective subnets
 resource "aws_route_table_association" "public" {
