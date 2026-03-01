@@ -29,7 +29,7 @@ variable "private_sub_cidrs" {
 variable "project_name"{
   type = string
   description = "Name of the project"
-  default = "ha-webapp-project"
+  default = "ha-webapp-prod"
 }
 
 ########## ALB
