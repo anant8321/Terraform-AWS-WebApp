@@ -1,9 +1,8 @@
-# Highly Available Web Application on AWS using Terraform
+# Highly Available Web Application on AWS using Terraform with GitHub Actions CI/CD
 
 ## Overview
 
-This project demonstrates the design and deployment of a highly available web application on AWS using Terraform.  
-The infrastructure is built with a multi-AZ architecture, an internet-facing Application Load Balancer, a private Auto Scaling Group for compute, IAM-based access control, and CloudWatch-driven monitoring and scaling.
+This project demonstrates the design, automation, and deployment of a highly available web application infrastructure on AWS using Terraform, integrated with GitHub Actions CI/CD for automated and secure deployments.The infrastructure is built with a multi-AZ architecture, an internet-facing Application Load Balancer, a private Auto Scaling Group for compute, IAM-based access control, and CloudWatch-driven monitoring and scaling.
 
 
 ## Architecture Diagram
@@ -28,8 +27,73 @@ The infrastructure is built with a multi-AZ architecture, an internet-facing App
 2. The ALB listener receives the request and forwards it to the target group.
 3. The target group routes traffic to healthy EC2 instances on port 8080.
 4. EC2 instances respond to the request.
-5. Health checks ensure only healthy instances receive traffic.
+5. ALB health checks continuously monitor instance health to ensure only healthy instances receive traffic.
 
+
+## CI/CD Pipeline
+
+Infrastructure deployments are automated using GitHub Actions, with secure AWS authentication implemented via OpenID Connect (OIDC). This eliminates the need for long-lived AWS access keys in CI/CD.
+
+The pipeline supports two environments:
+
+1. Development (dev) — automatic deployments for rapid iteration
+2. Production (prod) — controlled deployments with manual approval
+
+### 1. Dev Deployment
+
+The dev environment is automatically deployed whenever code is pushed to the main branch.
+
+This enables rapid validation of infrastructure changes during development.
+
+Trigger : Push to main branch
+#### Pipeline Workflow
+```text
+Checkout Repository
+        ↓
+Authenticate to AWS using OIDC
+        ↓
+Terraform Init
+        ↓
+Terraform Plan
+        ↓
+Terraform Apply (dev environment)
+```
+### 2. Production Deployment
+
+The prod environment uses a controlled deployment process to prevent unintended infrastructure changes.
+
+Production deployments are triggered manually and require approval before applying changes.
+
+Trigger : Manual Trigger (Run workflow)
+#### Deployment Workflow
+```text
+Manual Trigger (GitHub Actions)
+        ↓
+Checkout Repository
+        ↓
+Authenticate to AWS using OIDC
+        ↓
+Terraform Init
+        ↓
+Terraform Plan
+        ↓
+Terraform Apply (prod environment)
+```
+
+## Terraform Remote State
+
+Terraform states for both environments(dev and prod) is stored remotely to enable safe collaboration and consistent infrastructure management.
+
+Backend configuration:
+- S3 Bucket → stores Terraform state file
+- DynamoDB Table → state locking
+
+Example state paths:
+```text
+webapp/dev/terraform.tfstate
+webapp/prod/terraform.tfstate
+```
+This prevents concurrent modifications and state corruption.
 
 ## Folder Structure
 ```text
