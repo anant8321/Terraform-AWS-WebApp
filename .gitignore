@@ -1,7 +1,5 @@
-# Things to ignore
-
 .terraform/
 *.tfstate
-# *.tfstate.backup
+*.tfstate.backup
 .terraform.lock.hcl
 notes.txt
